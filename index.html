@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tournament App with Top 20</title>
+  <title>Tournament App with Team Medal Tally</title>
   <style>
-    * {
-    box-sizing: border-box; color: red;
+     * {
+    box-sizing: border-box; color: blue;
       
   }
 
@@ -129,7 +129,7 @@
 </head>
 <body>
 
-<h2>🏆 TOURNAMENT RANK</h2>
+<h2>🏆 Tournament Admin App</h2>
 
 <div class="section">
   <h3>👤 Player Entry</h3>
@@ -142,30 +142,38 @@
 <div class="section">
   <h3>⚔️ Competition</h3>
   <input type="text" id="competitionName" placeholder="Competition Name">
+  <label>Select Competitor:</label><select id="competitorsDropdown" onchange="addCompetitorFromDropdown()"></select>
   <select id="competitors" multiple size="5"></select>
   <input type="number" id="matchPrize" placeholder="Prize Pool ($)" value="300">
   <label>🏅 Winner:</label><select id="winnerSelect"></select>
   <label>🧈 Runner-up:</label><select id="runnerSelect"></select>
   <label>🥉 Third Place:</label><select id="thirdSelect"></select>
+  <label>4th Place:</label><select id="fourthSelect"></select>
+  <label>5th Place:</label><select id="fifthSelect"></select>
   <button onclick="recordMatch()">Record Match</button>
-  <table id="matchTable"><tr><th>#</th><th>Name</th><th>Competitors</th><th>Prize</th><th>Winner</th><th>Runner-up</th><th>Third Place</th></tr></table>
+  <table id="matchTable"><tr><th>#</th><th>Name</th><th>Competitors</th><th>Prize</th><th>Winner</th><th>Runner-up</th><th>Third</th><th>4th</th><th>5th</th><th>Action</th></tr></table>
 </div>
 
 <div class="section">
-  <h3>🏅 Leaderboard</h3>
+  <h3>🏅 Leaderboard (Points Based)</h3>
   <table id="leaderboardTable">
-    <tr><th>Serial</th><th>Rank</th><th>Player</th><th>Team</th><th>Wins</th><th>Losses</th><th>Total Prize</th></tr>
+    <tr><th>Serial</th><th>Rank</th><th>Player</th><th>Team</th><th>Wins</th><th>Losses</th><th>Prize</th><th>Points</th><th>Gold</th><th>Silver</th><th>Bronze</th></tr>
   </table>
 </div>
 
 <div class="section">
   <h3>📅 Weekly Top 20</h3>
-  <table id="weeklyTop"><tr><th>Rank</th><th>Player</th><th>Team</th><th>Prize</th></tr></table>
+  <table id="weeklyTop"><tr><th>Rank</th><th>Player</th><th>Team</th><th>Points</th></tr></table>
 </div>
 
 <div class="section">
   <h3>📅 Monthly Top 20</h3>
-  <table id="monthlyTop"><tr><th>Rank</th><th>Player</th><th>Team</th><th>Prize</th></tr></table>
+  <table id="monthlyTop"><tr><th>Rank</th><th>Player</th><th>Team</th><th>Points</th></tr></table>
+</div>
+
+<div class="section">
+  <h3>💼 Team Medal Tally</h3>
+  <table id="teamTally"><tr><th>Team</th><th>Gold</th><th>Silver</th><th>Bronze</th><th>Total Points</th></tr></table>
 </div>
 
 <script>
@@ -184,11 +192,11 @@ function addPlayer() {
   const team = document.getElementById("teamName").value.trim();
   if (name && !players.find(p => p.name === name)) {
     players.push({ name, team });
-    stats[name] = { wins: 0, losses: 0, prize: 0 };
-    document.getElementById("playerName").value = "";
-    document.getElementById("teamName").value = "";
+    stats[name] = { wins: 0, losses: 0, prize: 0, points: 0, gold: 0, silver: 0, bronze: 0 };
     updateAll();
   }
+  document.getElementById("playerName").value = "";
+  document.getElementById("teamName").value = "";
 }
 
 function updateAll() {
@@ -198,6 +206,7 @@ function updateAll() {
   updateLeaderboard();
   updateMatchTable();
   updateTop20();
+  updateTeamTally();
 }
 
 function updatePlayerTable() {
@@ -234,16 +243,36 @@ function removePlayer(i) {
 }
 
 function updateSelects() {
-  const selects = ["competitors", "winnerSelect", "runnerSelect", "thirdSelect"];
+  const selects = ["competitorsDropdown", "winnerSelect", "runnerSelect", "thirdSelect", "fourthSelect", "fifthSelect"];
   selects.forEach(id => document.getElementById(id).innerHTML = "");
-
   players.forEach(p => {
     selects.forEach(id => {
       const opt = new Option(`${p.name} (${p.team})`, p.name);
       document.getElementById(id).appendChild(opt.cloneNode(true));
     });
   });
+  updateCompetitorsList();
 }
+
+function updateCompetitorsList() {
+  const list = document.getElementById("competitors");
+  list.innerHTML = "";
+  players.forEach(p => {
+    const opt = new Option(`${p.name} (${p.team})`, p.name);
+    list.appendChild(opt);
+  });
+}
+
+function addCompetitorFromDropdown() {
+  const dropdown = document.getElementById("competitorsDropdown");
+  const selected = dropdown.value;
+  const list = document.getElementById("competitors");
+  if ([...list.options].some(opt => opt.value === selected)) return;
+  const opt = new Option(`${selected}`, selected);
+  list.appendChild(opt);
+  dropdown.selectedIndex = 0;
+}
+
 
 function recordMatch() {
   const name = document.getElementById("competitionName").value.trim();
@@ -252,60 +281,44 @@ function recordMatch() {
   const win = document.getElementById("winnerSelect").value;
   const run = document.getElementById("runnerSelect").value;
   const third = document.getElementById("thirdSelect").value;
-  if (!(win && run && third) || new Set([win, run, third]).size < 3) {
-    alert("Select 3 different winners.");
-    return;
+  const fourth = document.getElementById("fourthSelect").value;
+  const fifth = document.getElementById("fifthSelect").value;
+
+  const all = [win, run, third, fourth, fifth];
+  if (new Set(all).size < 5 || all.includes("")) {
+    alert("Select 5 different placements."); return;
   }
-  stats[win].wins++; stats[run].wins++; stats[third].wins++;
-  players.forEach(p => {
-    if (![win, run, third].includes(p.name)) stats[p.name].losses++;
-  });
-  stats[win].prize += prize * 0.5;
-  stats[run].prize += prize * 0.3;
-  stats[third].prize += prize * 0.2;
-  matches.push({ name, comp, prize, win, run, third });
+  stats[win].wins++; stats[win].points += 5; stats[win].gold++;
+  stats[run].wins++; stats[run].points += 3; stats[run].silver++;
+  stats[third].wins++; stats[third].points += 2; stats[third].bronze++;
+  stats[fourth].points += 1;
+  stats[fifth].points += 1;
+  players.forEach(p => { if (!all.includes(p.name)) stats[p.name].losses++; });
+  stats[win].prize += prize * 0.4;
+  stats[run].prize += prize * 0.25;
+  stats[third].prize += prize * 0.15;
+  stats[fourth].prize += prize * 0.10;
+  stats[fifth].prize += prize * 0.10;
+  matches.push({ name, comp, prize, win, run, third, fourth, fifth });
   updateAll();
 }
 
 function updateLeaderboard() {
   const sorted = [...players].map(p => ({ ...p, ...stats[p.name] }))
-    .sort((a, b) => b.prize - a.prize);
-
-  const rankMap = {};
-  sorted.forEach((p, i) => rankMap[p.name] = i + 1);
-
+    .sort((a, b) => b.points - a.points);
   const table = document.getElementById("leaderboardTable");
-  table.innerHTML = "<tr><th>Serial</th><th>Rank</th><th>Player</th><th>Team</th><th>Wins</th><th>Losses</th><th>Total Prize</th></tr>";
-  players.forEach((p, i) => {
-    const s = stats[p.name];
-    const r = rankMap[p.name];
-    let cls = r === 1 ? 'gold' : r === 2 ? 'silver' : r === 3 ? 'bronze' : '';
-    table.innerHTML += `<tr class="${cls}">
-      <td>${i + 1}</td><td>${r}</td><td>${p.name}</td><td>${p.team}</td>
-      <td>${s.wins}</td><td>${s.losses}</td><td>${s.prize.toFixed(2)}</td>
-    </tr>`;
-  });
-}
-
-function updateMatchTable() {
-  const table = document.getElementById("matchTable");
-  table.innerHTML = "<tr><th>#</th><th>Name</th><th>Competitors</th><th>Prize</th><th>Winner</th><th>Runner-up</th><th>Third Place</th></tr>";
-  matches.forEach((m, i) => {
-    table.innerHTML += `<tr>
-      <td>${i + 1}</td>
-      <td>${m.name || ''}</td>
-      <td>${m.comp.join(", ")}</td>
-      <td>$${m.prize}</td>
-      <td>${m.win} (50%)</td>
-      <td>${m.run} (30%)</td>
-      <td>${m.third} (20%)</td>
-    </tr>`;
+  table.innerHTML = "<tr><th>Serial</th><th>Rank</th><th>Player</th><th>Team</th><th>Wins</th><th>Losses</th><th>Prize</th><th>Points</th><th>Gold</th><th>Silver</th><th>Bronze</th></tr>";
+  sorted.forEach((p, i) => {
+    let cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    table.innerHTML += `<tr class="${cls}"><td>${i + 1}</td><td>${i + 1}</td><td>${p.name}</td><td>${p.team}</td>
+      <td>${p.wins}</td><td>${p.losses}</td><td>$${p.prize.toFixed(2)}</td><td>${p.points}</td>
+      <td>${p.gold}</td><td>${p.silver}</td><td>${p.bronze}</td></tr>`;
   });
 }
 
 function updateTop20() {
-  const top = [...players].map(p => ({ ...p, prize: stats[p.name].prize }))
-    .sort((a, b) => b.prize - a.prize).slice(0, 20);
+  const top = [...players].map(p => ({ ...p, points: stats[p.name].points }))
+    .sort((a, b) => b.points - a.points).slice(0, 20);
   localStorage.setItem("weeklyTop20", JSON.stringify(top));
   localStorage.setItem("monthlyTop20", JSON.stringify(top));
   renderTopTable("weeklyTop", top);
@@ -314,16 +327,42 @@ function updateTop20() {
 
 function renderTopTable(id, data) {
   const table = document.getElementById(id);
-  table.innerHTML = "<tr><th>Rank</th><th>Player</th><th>Team</th><th>Prize</th></tr>";
+  table.innerHTML = "<tr><th>Rank</th><th>Player</th><th>Team</th><th>Points</th></tr>";
   data.forEach((p, i) => {
-    table.innerHTML += `<tr><td>${i + 1}</td><td>${p.name}</td><td>${p.team}</td><td>$${p.prize.toFixed(2)}</td></tr>`;
+    table.innerHTML += `<tr><td>${i + 1}</td><td>${p.name}</td><td>${p.team}</td><td>${p.points}</td></tr>`;
   });
 }
 
-// Initialize on load
+function updateMatchTable() {
+  const table = document.getElementById("matchTable");
+  table.innerHTML = "<tr><th>#</th><th>Name</th><th>Competitors</th><th>Prize</th><th>Winner</th><th>Runner-up</th><th>Third</th><th>4th</th><th>5th</th><th>Action</th></tr>";
+  matches.forEach((m, i) => {
+    table.innerHTML += `<tr><td>${i + 1}</td><td>${m.name}</td><td>${m.comp.join(", ")}</td><td>$${m.prize}</td>
+      <td>${m.win}</td><td>${m.run}</td><td>${m.third}</td><td>${m.fourth}</td><td>${m.fifth}</td>
+      <td><button onclick="deleteMatch(${i})">Delete</button></td></tr>`;
+  });
+}
+
+function updateTeamTally() {
+  const tally = {};
+  players.forEach(p => {
+    if (!tally[p.team]) tally[p.team] = { gold: 0, silver: 0, bronze: 0, points: 0 };
+    const s = stats[p.name];
+    tally[p.team].gold += s.gold;
+    tally[p.team].silver += s.silver;
+    tally[p.team].bronze += s.bronze;
+    tally[p.team].points += s.points;
+  });
+  const table = document.getElementById("teamTally");
+  table.innerHTML = "<tr><th>Team</th><th>Gold</th><th>Silver</th><th>Bronze</th><th>Total Points</th></tr>";
+  Object.keys(tally).sort((a, b) => tally[b].points - tally[a].points).forEach(team => {
+    const t = tally[team];
+    table.innerHTML += `<tr><td>${team}</td><td>${t.gold}</td><td>${t.silver}</td><td>${t.bronze}</td><td>${t.points}</td></tr>`;
+  });
+}
+
 updateAll();
 </script>
 
 </body>
 </html>
-
