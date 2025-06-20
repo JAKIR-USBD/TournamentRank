@@ -315,6 +315,12 @@ function updateLeaderboard() {
       <td>${p.gold}</td><td>${p.silver}</td><td>${p.bronze}</td></tr>`;
   });
 }
+  
+  function deleteMatch(index) {
+  if (!confirm("Are you sure you want to delete this match?")) return;
+  matches.splice(index, 1);
+  updateAll();
+}
 
 function updateTop20() {
   const top = [...players].map(p => ({ ...p, points: stats[p.name].points }))
