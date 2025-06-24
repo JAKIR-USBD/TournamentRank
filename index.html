@@ -5,138 +5,151 @@
   <title>Tournament App with Team Medal Tally</title>
   <style>
     * {
-      box-sizing: border-box;
-      color: blue;
-    }
+    box-sizing: border-box; color: blue;
+       font-weight: bold; font-style: italic;
+  }
 
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: purple;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+
+  h2 {
+    text-align: center;
+    color: lime;
+    border-style: dashed double solid;
+    border: 80px;
+    width: 1200px;
+    font-style: italic;
+    font-weight: bold;
+    text-decoration: red wavy underline;
+  }
+
+  h3 {
+    text-align: start;
+    background-color: black;  
+    color: red;
+    
+    border-style: dashed double solid;
+    width: 300px;
+    font-style: italic;
+  }
+    h4 {
+    text-align: start;
+      background: lime;
+    color: black;
+    
+    border-style: dashed double solid;
+    width: 300px;
+    font-style: italic;
+  }
+    h5 {
+    text-align: start;
+      background: blue;;
+    color: white;
+    
+    border-style: dashed double solid;
+    width: 300px;
+    font-style: italic;
+  }
+
+  .section {
+    background: violet;
+    color: blue;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 900px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  input[type="text"], input[type="number"], select, button {
+    padding: 10px;
+    margin: 8px 0;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 8px solid #ccc;
+    color: red;
+  }
+
+  button {
+    background-color: pink;
+    color: black;
+    border: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: blue;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 15px;
+    background-color: gray;
+    color: blue;
+   
+  }
+
+  th, td {
+    border: 1px solid #dcdcdc;
+    padding: 10px;
+    text-align: center;
+  }
+
+  th {
+    background-color: orange;
+    color: black;
+  }
+
+  td[contenteditable="true"] {
+    background: lime;
+    color: red;
+  }
+
+  .gold {
+    background: lime;
+    font-weight: bold;
+   
+  }
+
+  .silver {
+    background: red;
+    font-weight: bold;
+  }
+
+  .bronze {
+    background: aqua;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: gray;
-      margin: 0;
-      padding: 20px;
-      color: #333;
+      padding: 10px;
     }
-
-    h2 {
-      text-align: center;
-      color: lime;
-      border-style: dashed double solid;
-      border: 80px;
-      width: 1200px;
-      font-style: italic;
-      text-decoration: red wavy underline;
-    }
-
-    h3 {
-      text-align: start;
-      color: red;
-      border-style: dashed double solid;
-      width: 600px;
-      font-style: italic;
-    }
-    .edit-icon {
-  cursor: pointer;
-  color: blue;
-  margin-left: 6px;
-  font-weight: bold;
-  font-size: 16px;
-}
 
     .section {
-      background: violet;
-      color: red;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 900px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 15px;
     }
 
-    input[type="text"], input[type="number"], select, button {
-      padding: 10px;
-      margin: 8px 0;
-      width: 100%;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 8px solid #ccc;
-      color: blue;
-    }
-
-    input[type="file"] {
-      margin: 8px 0;
-    }
-
-    button {
-      background-color: pink;
-      color: black;
-      border: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-
-    button:hover {
-      background-color: blue;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 15px;
-      background-color: aqua;
+    input, select, button {
+      font-size: 14px;
+      width: 50%;
     }
 
     th, td {
-      border: 1px solid #dcdcdc;
-      padding: 10px;
-      text-align: center;
+      font-size: 13px;
+      padding: 6px;
     }
-
-    th {
-      background-color: aqua;
-      color: red;
-      cursor: pointer;
-    }
-
-    td[contenteditable="true"] {
-      background: lime;
-    }
-
-    .gold {
-      background: linear-gradient(90deg, gold, #ffd700);
-      font-weight: bold;
-    }
-
-    .silver {
-      background: linear-gradient(90deg, silver, #d3d3d3);
-      font-weight: bold;
-    }
-
-    .bronze {
-      background: linear-gradient(90deg, #cd7f32, #d4a373);
-      font-weight: bold;
-    }
-
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
-
-      .section {
-        padding: 15px;
-      }
-
-      input, select, button {
-        font-size: 14px;
-        width: 50%;
-      }
-
-      th, td {
-        font-size: 13px;
-        padding: 6px;
-      }
-    }
+  }
   </style>
 </head>
 <body>
@@ -154,7 +167,7 @@
   </table>
 </div>
  <div class="section">
-  <h3>⚔️ Competition</h3>
+  <h4>⚔️ Competition</h4>
   <input type="text" id="competitionName" placeholder="Competition Name">
   <label>Select Competitor:</label>
   <select id="competitorsDropdown" onchange="addCompetitorFromDropdown()"></select>
@@ -179,14 +192,14 @@
 </div>
 
 <div class="section">
-  <h3>🏅 Leaderboard (Points Based)</h3>
+  <h5>🏅 Leaderboard (Points Based)</h5>
   <table id="leaderboardTable">
     <tr><th onclick="sortLeaderboard('rank')">Rank</th><th onclick="sortLeaderboard('name')">Player</th><th onclick="sortLeaderboard('team')">Team</th><th>Wins</th><th>Losses</th><th>Prize</th><th onclick="sortLeaderboard('points')">Points</th><th>Gold</th><th>Silver</th><th>Bronze</th></tr>
   </table>
 </div>
 
 <div class="section">
-  <h3>💼 Team Medal Tally</h3>
+  <h4>💼 Team Medal Tally</h4>
   <table id="teamTally">
     <tr><th>Team</th><th>Gold</th><th>Silver</th><th>Bronze</th><th>Total Points</th></tr>
   </table>
