@@ -6,7 +6,7 @@
   <style>
      * {
     box-sizing: border-box; color: blue;
-      
+       font-weight: bold;
   }
 
   body {
@@ -24,14 +24,16 @@
     border: 80px;
     width: 1200px;
     font-style: italic;
+    font-weight: bold;
     text-decoration: red wavy underline;
   }
-    h3 {
+
+  h3 {
     text-align: start;
-    color: red;
+    color: blue;
     border-style: dashed double solid;
     width: 600px;
-      font-style: italic;
+    font-style: italic;
   }
 
   .section {
@@ -51,8 +53,7 @@
     font-size: 16px;
     border-radius: 6px;
     border: 8px solid #ccc;
-    color: blue;
-    
+    color: red;
   }
 
   button {
@@ -65,7 +66,7 @@
   }
 
   button:hover {
-    background-color: blue;;
+    background-color: blue;
   }
 
   table {
@@ -73,7 +74,8 @@
     border-collapse: collapse;
     margin-top: 15px;
     font-size: 15px;
-    background-color: aqua;
+    background-color: black;
+   
   }
 
   th, td {
@@ -83,12 +85,13 @@
   }
 
   th {
-    background-color: aqua;
+    background-color: lime;
     color: red;
   }
 
   td[contenteditable="true"] {
     background: lime;
+    color: red;
   }
 
   .gold {
@@ -129,7 +132,7 @@
 </head>
 <body>
 
-<h2>🏆 Tournament Admin App</h2>
+<h2>🏆 TOURNAMENT RANK</h2>
 
 <div class="section">
   <h3>👤 Player Entry</h3>
@@ -156,6 +159,7 @@
 
 <div class="section">
   <h3>🏅 Leaderboard (Points Based)</h3>
+  <input type="text" id="leaderboardSearch" placeholder="Search Player or Team..." onkeyup="filterLeaderboard()">
   <table id="leaderboardTable">
     <tr><th>Serial</th><th>Rank</th><th>Player</th><th>Team</th><th>Wins</th><th>Losses</th><th>Prize</th><th>Points</th><th>Gold</th><th>Silver</th><th>Bronze</th></tr>
   </table>
@@ -273,7 +277,6 @@ function addCompetitorFromDropdown() {
   dropdown.selectedIndex = 0;
 }
 
-
 function recordMatch() {
   const name = document.getElementById("competitionName").value.trim();
   const comp = Array.from(document.getElementById("competitors").selectedOptions).map(o => o.value);
@@ -315,8 +318,20 @@ function updateLeaderboard() {
       <td>${p.gold}</td><td>${p.silver}</td><td>${p.bronze}</td></tr>`;
   });
 }
-  
-  function deleteMatch(index) {
+
+function filterLeaderboard() {
+  const input = document.getElementById("leaderboardSearch").value.toLowerCase();
+  const table = document.getElementById("leaderboardTable");
+  const rows = table.getElementsByTagName("tr");
+
+  for (let i = 1; i < rows.length; i++) {
+    const player = rows[i].cells[2].innerText.toLowerCase();
+    const team = rows[i].cells[3].innerText.toLowerCase();
+    rows[i].style.display = (player.includes(input) || team.includes(input)) ? "" : "none";
+  }
+}
+
+function deleteMatch(index) {
   if (!confirm("Are you sure you want to delete this match?")) return;
   matches.splice(index, 1);
   updateAll();
