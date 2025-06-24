@@ -251,7 +251,8 @@ function updatePlayerTable() {
       <td>${i + 1}</td>
       <td contenteditable onblur="editName(${i}, this.innerText)">${p.name}</td>
       <td contenteditable onblur="editTeam(${i}, this.innerText)">${p.team}</td>
-      <td><img src="${p.image || ''}" width="50" height="50" onerror="this.src='https://via.placeholder.com/50'"/></td>
+      <td><img src="${p.image || ''}" width="50" height="50" onclick="editPlayerImage(${i})" style="cursor:pointer;" title="Click to edit image" onerror="this.src='https://via.placeholder.com/50'"/></td>
+
       <td><button onclick="removePlayer(${i})">❌</button></td>
     </tr>`;
   });
